@@ -1,2 +1,2 @@
 # Java_Core
-Self study
+Core Java code implementation
