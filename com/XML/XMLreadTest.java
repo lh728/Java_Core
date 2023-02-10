@@ -1,8 +1,9 @@
-
 package com_second.XML;
 
+import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -11,6 +12,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -62,6 +64,32 @@ public class XMLreadTest {
     }
 
     private static Map<String,Object> parseConfig(Element e) {
-        
+        HashMap<String, Object> result = new HashMap<>();
+        NodeList children = e.getChildNodes();
+        for (int i = 0; i < children.getLength();i++){
+            Element child = (Element) children.item(i);
+            String name = child.getAttribute("id");
+            Object value = parseObject((Element)child.getFirstChild());
+            result.put(name,value);
+        }
+        return result;
+
+    }
+
+    private static Object parseObject(Element e){
+        String tagName = e.getTagName();
+        if (tagName.equals("factory")) return parseFactory(e);
+        else if (tagName.equals("construct")) return parseConstruct(e);
+        else {
+            String childData = ((CharacterData) e.getFirstChild()).getData();
+            if (tagName.equals("int"))
+                return Integer.valueOf(childData);
+            else if (tagName.equals("boolean")) {
+                return Boolean.valueOf(childData);
+                
+            }
+            else 
+                return childData;
+        }
     }
 }
