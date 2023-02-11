@@ -12,12 +12,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class XMLreadTest {
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         String filename;
         if (args.length == 0){
             try (var in = new Scanner(System.in)){
@@ -63,7 +66,7 @@ public class XMLreadTest {
         System.out.println(config);
     }
 
-    private static Map<String,Object> parseConfig(Element e) {
+    private static Map<String,Object> parseConfig(Element e) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         HashMap<String, Object> result = new HashMap<>();
         NodeList children = e.getChildNodes();
         for (int i = 0; i < children.getLength();i++){
@@ -76,7 +79,7 @@ public class XMLreadTest {
 
     }
 
-    private static Object parseObject(Element e){
+    private static Object parseObject(Element e) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         String tagName = e.getTagName();
         if (tagName.equals("factory")) return parseFactory(e);
         else if (tagName.equals("construct")) return parseConstruct(e);
@@ -86,10 +89,48 @@ public class XMLreadTest {
                 return Integer.valueOf(childData);
             else if (tagName.equals("boolean")) {
                 return Boolean.valueOf(childData);
-                
+
             }
-            else 
+            else
                 return childData;
         }
     }
+
+    private static Object parseFactory(Element e) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        String className = e.getAttribute("class");
+        String methodName = e.getAttribute("method");
+        Object[] args = parseArgs(e.getChildNodes());
+        Class<?>[] parameterTypes = getParameterTypes(args);
+        Method method = Class.forName(className).getMethod(methodName, parameterTypes);
+        return method.invoke(null,args);
+    }
+
+    private static Object parseConstruct(Element e) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        String className = e.getAttribute("class");
+        Object[] args = parseArgs(e.getChildNodes());
+        Class<?>[] parameterTypes = getParameterTypes(args);
+        Constructor<?> constructor = Class.forName(className).getConstructor(parameterTypes);
+        return constructor.newInstance(args);
+    }
+
+    private static Object[] parseArgs(NodeList elements) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        Object[] objects = new Object[elements.getLength()];
+        for (int i = 0; i < objects.length;i++){
+            objects[i] = parseObject((Element) elements.item(i));
+        }
+        return objects;
+    }
+
+    private static Map<Class<?>,Class<?>> toPrimitive = Map.of(Integer.class,int.class,Boolean.class,boolean.class);
+
+    private static Class<?>[] getParameterTypes(Object[] args){
+        Class<?>[] classes = new Class<?>[args.length];
+        for (int i = 0; i < classes.length;i++){
+            Class<?> cl = args[i].getClass();
+            classes[i] = toPrimitive.get(cl);
+            if (classes[i] == null) classes[i] = cl;
+        }
+        return classes;
+    }
+
 }
