@@ -13,7 +13,6 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -21,7 +20,7 @@ import java.util.Random;
 
 public class XMLWriteTest {
     public static void main(String[] args) throws Exception {
-        Document doc = newDrawing(600, 400);
+        org.w3c.dom.Document doc = newDrawing(600, 400);
         writeDocument(doc,"drawing1.svg");
         writeNewDrawing(600,400,"drawing2.svg");
 
@@ -29,7 +28,7 @@ public class XMLWriteTest {
 
     private static Random generator = new Random();
 
-    public static Document newDrawing(int drawingWidth, int drawingHeight) throws ParserConfigurationException {
+    public static org.w3c.dom.Document newDrawing(int drawingWidth, int drawingHeight) throws ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -44,7 +43,7 @@ public class XMLWriteTest {
             int x = generator.nextInt(drawingWidth);
             int y = generator.nextInt(drawingHeight);
             int width = generator.nextInt(drawingWidth - x);
-            int height = generator.nextInt(drawingHeight - x);
+            int height = generator.nextInt(drawingHeight - y);
             int r = generator.nextInt(256);
             int g = generator.nextInt(256);
             int b = generator.nextInt(256);
@@ -54,12 +53,12 @@ public class XMLWriteTest {
             rectElement.setAttribute("width",""+ width);
             rectElement.setAttribute("height",""+ height);
             rectElement.setAttribute("fill",String.format("#%02x%02x%02x",r,g,b));
-            rectElement.appendChild(rectElement);
+            svgElement.appendChild(rectElement);
         }
-        return (Document) doc;
+        return  doc;
     }
 
-    public static void writeDocument(Document doc,String filename) throws TransformerException, IOException {
+    public static void writeDocument(org.w3c.dom.Document doc,String filename) throws TransformerException, IOException {
         Transformer t = TransformerFactory.newInstance().newTransformer();
         t.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM,
                 "http://www.w3.org/2000/CR-SVG-20000802/DTD/svg-20000802.dtd");
@@ -68,7 +67,7 @@ public class XMLWriteTest {
         t.setOutputProperty(OutputKeys.INDENT,"yes");
         t.setOutputProperty(OutputKeys.METHOD,"xml");
         t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount","2");
-        t.transform(new DOMSource((Node) doc),new StreamResult(Files.newOutputStream(Paths.get(filename))));
+        t.transform(new DOMSource( doc),new StreamResult(Files.newOutputStream(Paths.get(filename))));
 
     }
 
@@ -86,7 +85,7 @@ public class XMLWriteTest {
             int x = generator.nextInt(drawingWidth);
             int y = generator.nextInt(drawingHeight);
             int width = generator.nextInt(drawingWidth - x);
-            int height = generator.nextInt(drawingHeight - x);
+            int height = generator.nextInt(drawingHeight - y);
             int r = generator.nextInt(256);
             int g = generator.nextInt(256);
             int b = generator.nextInt(256);
