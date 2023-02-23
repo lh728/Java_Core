@@ -59,7 +59,7 @@ public class URLConnectionTest {
 
 
         }  catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 }
