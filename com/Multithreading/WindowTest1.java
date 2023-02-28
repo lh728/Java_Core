@@ -22,14 +22,19 @@ public class WindowTest1{
 }
 class Window1 implements Runnable{
     private int ticket = 100;
-    Object obj = new Object();
+//    private  Object obj = new Object();
 
     @Override
     public void run() {
 
         while (true ){
-            synchronized (obj) {
+            synchronized (this) {
                 if (ticket > 0) {
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
                     System.out.println(Thread.currentThread().getName() + ":Now the ticket is " + ticket);
                     ticket--;
                 } else {
