@@ -1,6 +1,6 @@
 package com;
 
-public class Manager extends Employee{
+public class Manager extends Employee{ 
     private double bonus ;
 
     public Manager() {
