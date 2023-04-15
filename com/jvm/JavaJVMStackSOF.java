@@ -4,7 +4,7 @@ package com.company.jvm;
 VM args: -Xss180k
  */
 public class JavaJVMStackSOF {
-    private int stackLength = 1;
+    private int stackLength = 1 ;
     public void stackLeak(){
         stackLength++;
         stackLeak();
