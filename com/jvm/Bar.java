@@ -12,7 +12,7 @@ public class Bar {
         new Bar().sum(3);
     }
 
-    private int sum(int c) {
+    private int sum(int c) { 
         return a + b + c;
     }
 } 
