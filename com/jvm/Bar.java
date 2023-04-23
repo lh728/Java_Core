@@ -7,7 +7,7 @@ java -XX:+PrintAssembly -Xcomp -XX:CompileCommand=dontinline,*Bar.sum
 public class Bar {
     int a = 1; 
     static int b = 1;
-
+ 
     public static void main(String[] args) {
         new Bar().sum(3);
     }
