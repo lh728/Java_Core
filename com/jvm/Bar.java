@@ -14,5 +14,5 @@ public class Bar {
 
     private int sum(int c) { 
         return a + b + c;
-    } 
+    }  
 } 
