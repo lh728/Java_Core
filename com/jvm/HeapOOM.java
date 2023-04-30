@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /*
 -Xms20m
 -Xmx20m
--XX:+HeapDumpOnOutOf-MemoryError
+-XX:+HeapDumpOnOutOf-MemoryError 
  */
  
 public class HeapOOM { 
