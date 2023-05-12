@@ -7,7 +7,7 @@ public class FinalizeEscapeGC {
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    protected void finalize() throws Throwable { 
         super.finalize();
         System.out.println("finalize method executed!");
         FinalizeEscapeGC.SAVE_HOOK = this;
