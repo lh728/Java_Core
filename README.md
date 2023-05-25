@@ -1,2 +1,2 @@
 # Java_Core
-Core Java code implementation
+Core Java Book code implementation
